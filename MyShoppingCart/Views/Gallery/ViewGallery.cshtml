@@ -1,0 +1,82 @@
+﻿@using MyShoppingCart.Models
+@model MyShoppingCart.Models.Product
+
+@{
+    ViewBag.Title = "ViewGallery";
+}
+
+<style>
+    .wrapper {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-gap: 10px;
+    }
+
+    .badge {
+        height: 25px;
+        width: 25px;
+        line-height: 18px;
+        /*display: inline-block;*/
+        /*display: table-cell;*/
+        text-align: center;
+        vertical-align: middle;
+        border-radius: 50%;
+        border: thin solid;
+        color: black;
+        background: white;
+        float: right;
+    }
+</style>
+
+@{
+    var sessionId = (string)ViewData["sessionId"];
+    var customer = (Customer)ViewData["customer"];
+    var cartList = (List<Cart>)ViewData["cartList"];
+    var productList = (List<Product>)ViewData["productList"];
+    var searchString = (string)ViewData["searchString"];
+    var name = customer.FirstName + " " + customer.LastName;
+    var numOfItemsInCart = cartList.Count;
+}
+
+<p></p>
+
+<b>Hello, @name</b>
+&nbsp;
+@Html.ActionLink("My Purchases", "ViewPurchases", "Purchase", new { sessionId = @sessionId }, null)
+|&nbsp;
+@Html.ActionLink("Logout", "Index", "Logout", new { sessionId = @sessionId }, null)
+&nbsp;
+<a href="@Url.Action("ViewCart", "Cart", new { sessionId = @sessionId })" style="text-decoration : none">
+    <div class="badge">@numOfItemsInCart</div>
+    <img src="@Url.Content("~/Images/cart.png")" alt="Cart" height="25" width="25" style="float:right" />
+</a>
+
+<p></p>
+
+@*@using (Html.BeginForm("ViewGallery", "Gallery", FormMethod.Post,
+        new { sessionId = @sessionId, searchString = @searchString }))
+    {
+        <input type="text" name="searchString" />
+        <input type="submit" value="Search" />
+    }*@
+
+<form action="/Gallery/ViewGallery" method="post" id="myForm">
+    &#x1F50D;
+    <input type="text" name="searchString" value="@searchString" placeholder="Search for item" />
+
+    <p></p>
+
+    <div class="wrapper">
+        @foreach (var item in productList)
+        {
+        <div>
+            <img src="@Url.Content("~/Images/" + @item.Id + ".jpg")" alt="@item.Name" height="100" width="100" /><br />
+            @item.Name<br />
+            @item.Description<br />
+            <button type="submit" name="productId" value="@item.Id">$@item.Price - Add To Cart</button>
+        </div>
+        }
+    </div>
+
+    <input type="hidden" name="sessionId" value="@sessionId" />
+</form>

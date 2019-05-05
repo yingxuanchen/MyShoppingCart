@@ -1,0 +1,79 @@
+﻿@using MyShoppingCart.Models
+
+@{
+    ViewBag.Title = "ViewPurchases";
+}
+
+<style>
+    .wrapper {
+        display: grid;
+        grid-template-columns: 1fr 3fr 5fr 1fr;
+        grid-gap: 10px;
+    }
+</style>
+
+<script>
+    function download() {
+        alert('Download successful!')
+    }
+</script>
+
+@{
+    var sessionId = (string)ViewData["sessionId"];
+    var purchaseList = (List<Purchase>)ViewData["purchaseList"];
+}
+
+<p></p>
+
+My Purchases
+&nbsp;
+@Html.ActionLink("Home", "ViewGallery", "Gallery", new { sessionId = @sessionId }, null)
+|&nbsp;
+@Html.ActionLink("Logout", "Index", "Logout", new { sessionId = @sessionId }, null)
+
+<p></p>
+
+<div class="wrapper" align="center">
+    @foreach (var item in purchaseList)
+    {
+        <div></div>
+        <div align="center">
+            <img src="@Url.Content("~/Images/" + @item.ProductId + ".jpg")" alt="@item.ProductName" height="100" width="100" /><br />
+            @item.ProductName<br />
+            @item.ProductDescription<br />
+            <button onclick="download()">Download</button>
+        </div>
+        <div>
+            <table>
+                <tr>
+                    <td>Purchased On:</td>
+                    <td>@item.DatePurchased.ToString("d MMM yyyy")</td>
+                </tr>
+                <tr>
+                    <td>Quantity:</td>
+                    <td>@item.Quantity</td>
+                </tr>
+                <tr>
+                    <td>Activation Code:</td>
+                    <td>
+                        @if (item.ActivationCodes.Count == 1)
+                        {
+                            @item.ActivationCodes[0]
+                        }
+                        else
+                        {
+                            <select>
+                                @foreach (var code in item.ActivationCodes)
+                                {
+                                    <option>@code</option>
+                                }
+                            </select>
+                        }
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div></div>
+    }
+</div>
+

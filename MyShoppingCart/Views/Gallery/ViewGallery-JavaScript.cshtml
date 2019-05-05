@@ -1,0 +1,70 @@
+﻿@using MyShoppingCart.Models
+@model MyShoppingCart.Models.Product
+
+@{
+    ViewBag.Title = "ViewGallery";
+}
+
+<style>
+    .wrapper {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr); @* repeat 1 fractional unit 3 times *@
+        grid-gap: 10px;
+    }
+</style>
+
+<script>
+    function search() {
+        var searchString = document.getElementById("searchString").value;
+        listToDisplay = [];
+        searchString = searchString.toLowerCase();
+        var productArray = JSON.parse('@Html.Raw(Json.Encode(Model))'); @* convert C# list to Javascript array *@
+
+        for (var i = 0; i < productArray.length; i++) {
+            var item = productArray[i];
+            if (item.Name.toLowerCase().includes(searchString))
+                listToDisplay.push(item);
+        }
+    }
+</script>
+
+@{
+    var sessionId = ViewData["sessionId"];
+    var customer = (Customer)ViewData["customer"];
+    var cartList = (List<Cart>)ViewData["cartList"];
+    var productList = (List<Product>)ViewData["productList"];
+    var name = customer.FirstName + " " + customer.LastName;
+    var numOfItemsInCart = cartList.Count;
+    var numOfProducts = productList.Count;
+    var listToDisplay = productList;
+}
+
+Hello, @name
+&nbsp;
+My Purchases |
+&nbsp;
+Logout
+&nbsp;
+@numOfItemsInCart
+
+<p></p>
+
+<form onsubmit="return search();">
+    <input type="text" id="searchString" />
+    <input type="submit" />
+    <input type="hidden" value="@sessionId" />
+</form>
+
+
+<p></p>
+
+<div class="wrapper">
+    @foreach (var item in listToDisplay)
+    {
+        <div>
+            @item.Name<br />
+            @item.Description<br />
+            @item.Price
+        </div>
+    }
+</div>

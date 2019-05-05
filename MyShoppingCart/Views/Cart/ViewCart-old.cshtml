@@ -1,0 +1,88 @@
+﻿@using MyShoppingCart.Models
+
+@{
+    ViewBag.Title = "ViewCart";
+}
+
+<style>
+    .wrapper {
+        display: grid;
+        grid-template-columns: 1fr 2fr 2fr 1fr;
+        grid-gap: 10px;
+    }
+</style>
+
+<script>
+    function increaseAndSubmit(clicked_id) {
+        clicked_id = "q" + clicked_id;
+        document.getElementById(clicked_id).value++;
+        document.getElementById("myForm").submit();
+    }
+
+    function decreaseAndSubmit(clicked_id) {
+        clicked_id = "q" + clicked_id;
+        document.getElementById(clicked_id).value--;
+        document.getElementById("myForm").submit();
+    }
+
+    function updateAndSubmit(value, id) {
+        value = value.replace(/[^0-9]/g, '');
+        //var quantityId = "q" + productId;
+        document.getElementById(id).value = value;
+        if (value != null || value != "") {
+            var form = document.getElementById("myForm");
+            form.quantity.value = value;
+            form.submit();
+        }
+    }
+</script>
+
+@{
+    var sessionId = (string)ViewData["sessionId"];
+    var cartList = (List<Cart>)ViewData["cartList"];
+    var totalPriceInCart = (decimal)0;
+    foreach(var item in cartList)
+    {
+        totalPriceInCart += item.TotalPrice;
+    }
+}
+
+<p></p>
+
+View Cart
+&nbsp;
+@Html.ActionLink("Continue Shopping", "ViewGallery", 
+    "Gallery", new { sessionId = sessionId }, null)
+|&nbsp;
+Checkout
+&nbsp;
+Total: $@totalPriceInCart
+
+<p></p>
+
+<form id="myForm" action="/Cart/ViewCart" method="post">
+    <div class="wrapper">
+
+        @foreach (var item in cartList)
+        {
+            <div></div>
+            <div>
+                @item.ProductName<br />
+                @item.ProductDescription
+            </div>
+            <div>
+                Price: <span>$@item.TotalPrice</span><br />
+                Quantity: <input type="text" id="q@(item.ProductId)" name="quantity"
+                                 value="@item.Quantity" oninput="return updateAndSubmit(this.value, this.id);" />
+                          <button type="submit" id="@item.ProductId" onclick="return increaseAndSubmit(this.id);">&#x25B2</button>
+                          <button type="submit" id="@item.ProductId" onclick="return decreaseAndSubmit(this.id);">&#x25BC</button>
+                <input type="hidden" id="pq@(item.ProductId)" name="productId" value="@item.ProductId" />
+            </div>
+            <div></div>
+        }
+
+    </div>
+
+    <input type="hidden" name="sessionId" value="@sessionId" />
+</form>
+    

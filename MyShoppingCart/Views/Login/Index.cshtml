@@ -1,0 +1,36 @@
+﻿@model MyShoppingCart.Models.Customer
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<style>
+    .field-validation-error {
+        color: red;
+    }
+
+    th, td {
+        padding: 2px
+    }
+</style>
+
+<p></p>
+
+@using (Html.BeginForm("Index", "Login", FormMethod.Post))
+{
+    <table align="center">
+        <tr>
+            <td>@Html.LabelFor(x => x.Username)</td>
+            <td>@Html.TextBoxFor(x => x.Username)</td>
+            <td>@Html.ValidationMessageFor(x => x.Username)</td>
+        </tr>
+        <tr>
+            <td>@Html.LabelFor(x => x.Password)</td>
+            <td>@Html.PasswordFor(x => x.Password)</td>
+            <td>@Html.ValidationMessageFor(x => x.Password)</td>
+        </tr>
+        <tr>
+            <td colspan="2" align="right"><input type="submit" value="Login"></td>
+        </tr>
+    </table>
+}
